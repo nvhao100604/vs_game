@@ -12,7 +12,7 @@ export type PlayerState = {
 export type PlayerInput = {
     left: boolean,
     right: boolean,
-    jump_pressed: boolean
+    up: boolean
 }
 
 export const CreatePlayer = (x: number): PlayerState => {
@@ -24,14 +24,16 @@ export const CreatePlayer = (x: number): PlayerState => {
     }
 }
 
-export const UpdatePlayer = (ps: PlayerState, input: PlayerInput): PlayerState => {
+export const UpdatePlayer = (ps: PlayerState, input: PlayerInput, prev: PlayerInput): PlayerState => {
     let { x, y, vy, on_ground } = ps;
 
     if (input.left) x -= PLAYER_SPEED;
     if (input.right) x += PLAYER_SPEED;
     x = clamp(x, PLAYER_SIZE / 2, WORLD_WIDTH - PLAYER_SIZE / 2);
 
-    if (input.jump_pressed && ps.on_ground) {
+    const jump_pressed = input.up && !prev.up;
+
+    if (jump_pressed && ps.on_ground) {
         vy = JUMP_VELOCITY;
         on_ground = false;
     }
